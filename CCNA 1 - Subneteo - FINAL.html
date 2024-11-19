@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Subredes IP</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        // Función para "encriptar" el contenido
+        function encryptContent(content) {
+            return btoa(content);
+        }
+
+        // Función para "desencriptar" el contenido
+        function decryptContent(encryptedContent) {
+            return atob(encryptedContent);
+        }
+
+        // Contenido HTML "encriptado"
+        const encryptedContent = encryptContent(`
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                h1, h2, h3 {
+                    color: #2c3e50;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #3498db;
+                    color: white;
+                }
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+                .calculator, .adding {
+                    background-color: #ecf0f1;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-top: 20px;
+                }
+                label {
+                    display: block;
+                    margin-top: 10px;
+                }
+                input, select, textarea {
+                    width: 100%;
+                    padding: 8px;
+                    margin-top: 5px;
+                    border: 1px solid #bdc3c7;
+                    border-radius: 4px;
+                }
+                button {
+                    background-color: #2ecc71;
+                    color: white;
+                    padding: 10px 15px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                }
+                button:hover {
+                    background-color: #27ae60;
+                }
+                #result, #addingResult {
+                    margin-top: 20px;
+                }
+                .tab {
+                    overflow: hidden;
+                    border: 1px solid #ccc;
+                    background-color: #f1f1f1;
+                }
+                .tab button {
+                    background-color: inherit;
+                    float: left;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                    padding: 14px 16px;
+                    transition: 0.3s;
+                }
+                .tab button:hover {
+                    background-color: #ddd;
+                }
+                .tab button.active {
+                    background-color: #ccc;
+                }
+                .tabcontent {
+                    display: none;
+                    padding: 6px 12px;
+                    border: 1px solid #ccc;
+                    border-top: none;
+                }
+                .highlight {
+                    color: red;
+                    font-weight: bold;
+                }
+                footer {
+                    margin-top: 20px;
+                    text-align: center;
+                    padding: 10px;
+                    background-color: #f2f2f2;
+                    border-top: 1px solid #ddd;
+                }
+            </style>
+            <header>
+                <h1>Calculadora de Subredes IP</h1>
+            </header>
+
+            <main>
+                <div class="tab">
+                    <button class="tablinks" onclick="openTab(event, 'Information')" id="defaultOpen">Información</button>
+                    <button class="tablinks" onclick="openTab(event, 'Calculator')">Calculadora</button>
+                    <button class="tablinks" onclick="openTab(event, 'Adding')">Adding</button>
+                </div>
+
+                <div id="Information" class="tabcontent">
+                    <section>
+                        <h2>IPv4</h2>
+                        <h3>Tabla de Máscara</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bits</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>0</td><td>0</td></tr>
+                                <tr><td>1</td><td>128</td></tr>
+                                <tr><td>2</td><td>192</td></tr>
+                                <tr><td>3</td><td>224</td></tr>
+                                <tr><td>4</td><td>240</td></tr>
+                                <tr><td>5</td><td>248</td></tr>
+                                <tr><td>6</td><td>252</td></tr>
+                                <tr><td>7</td><td>254</td></tr>
+                                <tr><td>8</td><td>255</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Clases de IP IPv4</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Clase</th>
+                                    <th>Inicio</th>
+                                    <th>Fin</th>
+                                    <th>Privado</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>0.0.0.0</td>
+                                    <td>127.255.255.255</td>
+                                    <td><span class="highlight">10</span>.0.0.0 - <span class="highlight">10</span>.255.255.255<span class="highlight">/8</span></td>
+                                    <td>Privado</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>128.0.0.0</td>
+                                    <td>191.255.255.255</td>
+                                    <td><span class="highlight">172.16</span>.0.0 - <span class="highlight">172.31</span>.255.255<span class="highlight">/16</span></td>
+                                    <td>Privado</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>192.0.0.0</td>
+                                    <td>223.255.255.255</td>
+                                    <td><span class="highlight">192.168</span>.0.0 - <span class="highlight">192.168</span>.255.255<span class="highlight">/24</span></td>
+                                    <td>Privado</td>
+                                </tr>
+                                <tr>
+                                    <td>D</td>
+                                    <td>224.0.0.0</td>
+                                    <td>239.255.255.255</td>
+                                    <td>-</td>
+                                    <td>Multicast</td>
+                                </tr>
+                                <tr>
+                                    <td>E</td>
+                                    <td>240.0.0.0</td>
+                                    <td>255.255.255.255</td>
+                                    <td>-</td>
+                                    <td>Experimental</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section>
+                        <h2>IPv6</h2>
+                        <h3>Tabla de Prefijos IPv6</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Prefijo</th>
+                                    <th>Bits de Red</th>
+                                    <th>Bits de Host</th>
+                                    <th>Número de Subredes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>/48</td><td>48</td><td>80</td><td>65,536 (/64 redes)</td></tr>
+                                <tr><td>/56</td><td>56</td><td>72</td><td>256 (/64 redes)</td></tr>
+                                <tr><td>/60</td><td>60</td><td>68</td><td>16 (/64 redes)</td></tr>
+                                <tr><td>/64</td><td>64</td><td>64</td><td>1 (/64 red)</td></tr>
+                                <tr><td>/128</td><td>128</td><td>0</td><td>1 dirección</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Tipos de Direcciones IPv6</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Prefijo</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Global Unicast</td>
+                                    <td>2000::/3</td>
+                                    <td>Direcciones públicas enrutables globalmente</td>
+                                </tr>
+                                <tr>
+                                    <td>Unique Local</td>
+                                    <td>fc00::/7</td>
+                                    <td>Equivalente a direcciones privadas en IPv4</td>
+                                </tr>
+                                <tr>
+                                    <td>Link-Local</td>
+                                    <td>fe80::/10</td>
+                                    <td>Comunicación en el mismo enlace de red</td>
+                                </tr>
+                                <tr>
+                                    <td>Multicast</td>
+                                    <td>ff00::/8</td>
+                                    <td>Envío de paquetes a múltiples destinos</td>
+                                </tr>
+                                <tr>
+                                    <td>Loopback</td>
+                                    <td>::1/128</td>
+                                    <td>Dirección de bucle local (equivalente a 127.0.0.1 en IPv4)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <div id="Calculator" class="tabcontent">
+                    <section class="calculator">
+                        <h2>Calculadora de Subredes</h2>
+                        <form id="subnetForm">
+                            <label for="ipVersion">Versión de IP:</label>
+                            <select id="ipVersion" required onchange="updatePlaceholders()">
+                                <option value="ipv4">IPv4</option>
+                                <option value="ipv6">IPv6</option>
+                            </select>
+
+                            <label for="network">Red:</label>
+                            <input type="text" id="network" required>
+
+                            <label for="hosts">Cantidad de hosts requeridos (uno por línea):</label>
+                            <textarea id="hosts" rows="7" required></textarea>
+
+                            <button type="submit">Calcular Subredes</button>
+                        </form>
+
+                        <div id="result"></div>
+                        <button id="downloadExcel" style="display: none;">Descargar Resultados (Excel)</button>
+                    </section>
+                </div>
+
+                <div id="Adding" class="tabcontent">
+                    <section class="adding">
+                        <h2>Calcular Última IP Utilizable</h2>
+                        <form id="addingForm">
+                            <label for="addingIpVersion">Versión de IP:</label>
+                            <select id="addingIpVersion" required onchange="updateAddingPlaceholders()">
+                                <option value="ipv4">IPv4</option>
+                                <option value="ipv6">IPv6</option>
+                            </select>
+
+                            <label for="addingNetwork">Dirección IP con máscara:</label>
+                            <input type="text" id="addingNetwork" required>
+
+                            <button type="submit">Calcular</button>
+                        </form>
+
+                        <div id="addingResult"></div>
+                    </section>
+                </div>
+            </main>
+
+            <footer>
+                <p>Creado por Jeffry Carballo Vargas</p>
+            </footer>
+        `);
+
+        // Desencriptar y mostrar el contenido
+        document.getElementById('app').innerHTML = decryptContent(encryptedContent);
+
+        let subnetResults = [];
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById("defaultOpen").click();
+
+        function updatePlaceholders() {
+            const ipVersion = document.getElementById('ipVersion').value;
+            const networkInput = document.getElementById('network');
+            const hostsInput = document.getElementById('hosts');
+
+            if (ipVersion === 'ipv4') {
+                networkInput.placeholder = "Ej: 172.25.80.0/21";
+                hostsInput.placeholder = "Ej:\n1200\n1020\n255\n510\n155\n2\n7";
+            } else {
+                networkInput.placeholder = "Ej: 2001:db8::/32";
+                hostsInput.placeholder = "Ej:\n1000000\n500000\n250000\n100000\n50000\n10000\n5000";
+            }
+        }
+
+        function updateAddingPlaceholders() {
+            const ipVersion = document.getElementById('addingIpVersion').value;
+            const networkInput = document.getElementById('addingNetwork');
+
+            if (ipVersion === 'ipv4') {
+                networkInput.placeholder = "Ej: 192.168.1.0/24";
+            } else {
+                networkInput.placeholder = "Ej: 2001:db8::/64";
+            }
+        }
+
+        updatePlaceholders();
+        updateAddingPlaceholders();
+
+        document.getElementById('subnetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateSubnets();
+        });
+
+        document.getElementById('addingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateLastUsableIP();
+        });
+
+        function calculateSubnets() {
+            const ipVersion = document.getElementById('ipVersion').value;
+            const networkInput = document.getElementById('network').value;
+            const hostsInput = document.getElementById('hosts').value;
+
+            const hosts = hostsInput.split('\n')
+                .map(h => parseInt(h.trim()))
+                .filter(h => !isNaN(h) && h > 0)
+                .sort((a, b) => b - a);
+
+            if (ipVersion === 'ipv4') {
+                calculateIPv4Subnets(networkInput, hosts);
+            } else {
+                calculateIPv6Subnets(networkInput, hosts);
+            }
+        }
+
+        function calculateIPv4Subnets(networkInput, hosts) {
+            const [network, maskStr] = networkInput.split('/');
+            const mask = parseInt(maskStr);
+
+            if (isNaN(mask) || mask < 0 || mask > 32) {
+                document.getElementById('result').innerHTML = "<p>Error: Máscara de red inválida.</p>";
+                return;
+            }
+
+            const networkAddress = ipv4ToInt(network);
+            let currentNetwork = networkAddress;
+
+            let result = "<h3>Resultados de Subredes IPv4</h3>";
+            result += "<table><thead><tr><th>Subred</th><th>Hosts Requeridos</th><th>Hosts Disponibles</th><th>Red</th><th>Máscara</th><th>Primera IP</th><th>Última IP</th><th>Broadcast</th></tr></thead><tbody>";
+
+            subnetResults = [];
+
+            hosts.forEach((requiredHosts, index) => {
+                const hostBits = Math.ceil(Math.log2(requiredHosts + 2));
+                const subnetMask = 32 - hostBits;
+                const availableHosts = Math.pow(2, hostBits) - 2;
+
+                const subnetSize = Math.pow(2, 32 - subnetMask);
+                const broadcast = currentNetwork + subnetSize - 1;
+
+                const subnetData = {
+                    subred: index + 1,
+                    hostsRequeridos: requiredHosts,
+                    hostsDisponibles: availableHosts,
+                    red: intToIpv4(currentNetwork),
+                    mascara: `${intToIpv4(maskToInt(subnetMask))}/${subnetMask}`,
+                    primeraIP: intToIpv4(currentNetwork + 1),
+                    ultimaIP: intToIpv4(broadcast - 1),
+                    broadcast: intToIpv4(broadcast)
+                };
+
+                subnetResults.push(subnetData);
+
+                result += `<tr>
+                    <td>${subnetData.subred}</td>
+                    <td>${subnetData.hostsRequeridos}</td>
+                    <td>${subnetData.hostsDisponibles}</td>
+                    <td>${subnetData.red}</td>
+                    <td>${subnetData.mascara}</td>
+                    <td>${subnetData.primeraIP}</td>
+                    <td>${subnetData.ultimaIP}</td>
+                    <td>${subnetData.broadcast}</td>
+                </tr>`;
+
+                currentNetwork = broadcast + 1;
+            });
+
+            result += "</tbody></table>";
+            document.getElementById('result').innerHTML = result;
+            document.getElementById('downloadExcel').style.display = 'block';
+        }
+
+        function calculateIPv6Subnets(networkInput, hosts) {
+            const [network, maskStr] = networkInput.split('/');
+            const mask = parseInt(maskStr);
+
+            if (isNaN(mask) || mask < 0 || mask > 128) {
+                document.getElementById('result').innerHTML = "<p>Error: Máscara de red inválida.</p>";
+                return;
+            }
+
+            const networkAddress = ipv6ToBigInt(network);
+            let currentNetwork = networkAddress;
+
+            let result = "<h3>Resultados de Subredes IPv6</h3>";
+            result += "<table><thead><tr><th>Subred</th><th>Hosts Requeridos</th><th>Hosts Disponibles</th><th>Red</th><th>Máscara</th></tr></thead><tbody>";
+
+            subnetResults = [];
+
+            hosts.forEach((requiredHosts, index) => {
+                const hostBits = Math.ceil(Math.log2(requiredHosts));
+                const subnetMask = 128 - hostBits;
+                const availableHosts = BigInt(2) ** BigInt(hostBits);
+
+                const subnetSize = BigInt(2) ** BigInt(128 - subnetMask);
+                const nextNetwork = currentNetwork + subnetSize;
+
+                const subnetData = {
+                    subred: index + 1,
+                    hostsRequeridos: requiredHosts,
+                    hostsDisponibles: availableHosts.toString(),
+                    red: bigIntToIPv6(currentNetwork),
+                    mascara: `/${subnetMask}`
+                };
+
+                subnetResults.push(subnetData);
+
+                result += `<tr>
+                    <td>${subnetData.subred}</td>
+                    <td>${subnetData.hostsRequeridos}</td>
+                    <td>${subnetData.hostsDisponibles}</td>
+                    <td>${subnetData.red}</td>
+                    <td>${subnetData.mascara}</td>
+                </tr>`;
+
+                currentNetwork = nextNetwork;
+            });
+
+            result += "</tbody></table>";
+            document.getElementById('result').innerHTML = result;
+            document.getElementById('downloadExcel').style.display = 'block';
+        }
+
+        function calculateLastUsableIP() {
+            const ipVersion = document.getElementById('addingIpVersion').value;
+            const networkInput = document.getElementById('addingNetwork').value;
+
+            if (ipVersion === 'ipv4') {
+                calculateLastUsableIPv4(networkInput);
+            } else {
+                calculateLastUsableIPv6(networkInput);
+            }
+        }
+
+        function calculateLastUsableIPv4(networkInput) {
+            const [network, maskStr] = networkInput.split('/');
+            const mask = parseInt(maskStr);
+
+            if (isNaN(mask) || mask < 0 || mask > 32) {
+                document.getElementById('addingResult').innerHTML = "<p>Error: Máscara de red inválida.</p>";
+                return;
+            }
+
+            const networkAddress = ipv4ToInt(network);
+            const subnetSize = Math.pow(2, 32 - mask);
+            const broadcast = networkAddress + subnetSize - 1;
+            const lastUsableIP = broadcast - 1;
+
+            const result = `<p>Última IP utilizable: ${intToIpv4(lastUsableIP)}</p>`;
+            document.getElementById('addingResult').innerHTML = result;
+        }
+
+        function calculateLastUsableIPv6(networkInput) {
+            const [network, maskStr] = networkInput.split('/');
+            const mask = parseInt(maskStr);
+
+            if (isNaN(mask) || mask < 0 || mask > 128) {
+                document.getElementById('addingResult').innerHTML = "<p>Error: Máscara de red inválida.</p>";
+                return;
+            }
+
+            const networkAddress = ipv6ToBigInt(network);
+            const subnetSize = BigInt(2) ** BigInt(128 - mask);
+            const lastUsableIP = networkAddress + subnetSize - BigInt(1);
+
+            const result = `<p>Última IP utilizable: ${bigIntToIPv6(lastUsableIP)}</p>`;
+            document.getElementById('addingResult').innerHTML = result;
+        }
+
+        function ipv4ToInt(ip) {
+            return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet), 0) >>> 0;
+        }
+
+        function intToIpv4(int) {
+            return [
+                (int >>> 24) & 255,
+                (int >>> 16) & 255,
+                (int >>> 8) & 255,
+                int & 255
+            ].join('.');
+        }
+
+        function maskToInt(cidr) {
+            return (0xffffffff << (32 - cidr)) >>> 0;
+        }
+
+        function ipv6ToBigInt(ip) {
+            return ip.split(':').reduce((acc, part) => {
+                return (acc << BigInt(16)) + BigInt(parseInt(part || '0', 16));
+            }, BigInt(0));
+        }
+
+        function bigIntToIPv6(bigInt) {
+            const hex = bigInt.toString(16).padStart(32, '0');
+            return hex.match(/.{1,4}/g).join(':');
+        }
+
+        document.getElementById('downloadExcel').addEventListener('click', function() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(subnetResults);
+            XLSX.utils.book_append_sheet(wb, ws, "Subredes");
+            XLSX.writeFile(wb, "resultados_subredes.xlsx");
+        });
+    </script>
+</body>
+</html>
